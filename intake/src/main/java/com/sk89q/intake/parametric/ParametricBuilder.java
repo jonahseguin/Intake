@@ -20,7 +20,9 @@
 package com.sk89q.intake.parametric;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AbstractListeningExecutorService;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandCallable;
 import com.sk89q.intake.CommandException;
@@ -33,14 +35,13 @@ import com.sk89q.intake.parametric.handler.InvokeListener;
 import com.sk89q.intake.util.auth.Authorizer;
 import com.sk89q.intake.util.auth.NullAuthorizer;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -228,7 +229,32 @@ public class ParametricBuilder {
     // In Guava 18 this method was renamed to MoreExecutors.directExecutor(), the original one was deprecated and later
     // removed.
     // Here we need to support clients running Guava 10 - 22, so we need to supply this function by ourselves.
-    private static final class DirectExecutorService extends AbstractListeningExecutorService {
+    private static final class DirectExecutorService extends AbstractExecutorService implements ListeningExecutorService {
+
+        @Override
+        protected final <T> ListenableFutureTask<T> newTaskFor(Runnable runnable, T value) {
+            return ListenableFutureTask.create(runnable, value);
+        }
+
+        @Override
+        protected final <T> ListenableFutureTask<T> newTaskFor(Callable<T> callable) {
+            return ListenableFutureTask.create(callable);
+        }
+
+        @Override
+        public ListenableFuture<?> submit(Runnable task) {
+            return (ListenableFuture<?>) super.submit(task);
+        }
+
+        @Override
+        public <T> ListenableFuture<T> submit(Runnable task, @Nullable T result) {
+            return (ListenableFuture<T>) super.submit(task, result);
+        }
+
+        @Override
+        public <T> ListenableFuture<T> submit(Callable<T> task) {
+            return (ListenableFuture<T>) super.submit(task);
+        }
 
         /**
          * Lock used whenever accessing the state variables (runningTasks, shutdown) of the executor
@@ -333,6 +359,4 @@ public class ParametricBuilder {
             }
         }
     }
-
-
 }
