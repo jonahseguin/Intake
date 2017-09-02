@@ -1,3 +1,16 @@
+## xxyy/Intake
+
+Notable differences to upstream:
+
+ - Guava 22 compatibility, taken from
+  [MyWarp/Intake](https://github.com/MyWarp/Intake)
+  ([1](https://github.com/MyWarp/Intake/commit/c7b5e82696faf7901652acec529a261128e2068a),
+  [2](https://github.com/MyWarp/Intake/commit/1277ebedd0f95a47ad9aef4bcca40381f2e044eb))
+ - A simplified TextProvider,fix for all @text ending with a space
+   ([upstream PR #25](https://github.com/EngineHub/Intake/pull/25))
+ - Multiple @Classifier annotations per parameter class
+   ([upstream PR #26](https://github.com/EngineHub/Intake/pull/26))
+
 # Intake
 
 Intake is a IoC-oriented command parsing library.
