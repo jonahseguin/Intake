@@ -10,6 +10,8 @@ Notable differences to upstream:
    ([upstream PR #25](https://github.com/EngineHub/Intake/pull/25))
  - Multiple @Classifier annotations per parameter class
    ([upstream PR #26](https://github.com/EngineHub/Intake/pull/26))
+ - Allows a default command via `alias = ""` and handles their parameters properly.
+   The default command is called if there is no command with given sub-command name.
 
 # Intake
 

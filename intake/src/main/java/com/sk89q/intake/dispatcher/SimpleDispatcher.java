@@ -133,9 +133,11 @@ public class SimpleDispatcher implements Dispatcher {
             List<String> subParents = ImmutableList.<String>builder().addAll(parentCommands).add(subCommand).build();
             CommandMapping mapping = get(subCommand);
 
+            // xxyy: Default to empty string mapping if unknown command
             if(mapping == null) {
                 mapping = get("");
                 subParents = parentCommands;
+                subArguments = arguments;
             }
 
             if (mapping != null) {
